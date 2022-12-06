@@ -1,4 +1,4 @@
 ## Custom Cognito Auth-React
 
-![](./public/login_snap.png)
-![](./public/register_snap.png)
+![](./public/login_snap.jpeg)
+![](./public/register_snap.jpeg)
