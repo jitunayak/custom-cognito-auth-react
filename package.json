@@ -1,0 +1,32 @@
+{
+  "name": "custom-cognito-auth-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "resolutions": {
+    "styled-components": "^5"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@aws-amplify/ui-react": "^4.0.3",
+    "@aws-sdk/credential-providers": "^3.216.0",
+    "@types/styled-components": "^5.1.26",
+    "amazon-cognito-identity-js": "^6.0.1",
+    "aws-amplify": "^5.0.4",
+    "aws4-axios": "^2.4.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.6"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.24",
+    "@types/react-dom": "^18.0.8",
+    "@vitejs/plugin-react": "^2.2.0",
+    "typescript": "^4.6.4",
+    "vite": "^3.2.3"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "UserPoolClientId": "3vvcse6tnr6b1ji6rettp9vqh1",
+  "UserPoolId": "ap-south-1_2kxI9ar6F",
+  "EnterpriseLogAccessIamRole": "arn:aws:iam::967217736102:role/cognito-api-gateway-dev-EnterpriseLogAccessIamRole-10ZPWVC6TB9GO",
+  "IdentityPoolId": "ap-south-1:6b43e76f-f1b1-4b44-83f7-b188336f444e",
+  "HttpApiId": "h6cn690wg0",
+  "ServerlessDeploymentBucketName": "cognito-api-gateway-dev-serverlessdeploymentbucke-1ont9uc7gc3jf",
+  "HttpApiUrl": "https://h6cn690wg0.execute-api.ap-south-1.amazonaws.com"
+}
