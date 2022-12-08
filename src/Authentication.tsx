@@ -1,6 +1,7 @@
-import { ReactNode, useEffect, useState } from "react";
-import styled from "styled-components";
 import "./App.css";
+
+import { ReactNode, useEffect, useState } from "react";
+
 import {
   createNewAccount,
   login,
@@ -9,14 +10,21 @@ import {
 } from "./CognitoAPI";
 import InputBox from "./InputBox";
 import Loader from "./Loader";
+import {
+  Link,
+  PrimaryButton,
+  RegisterWrapper,
+  SignInWrapper,
+  Tab,
+  TabWrapper,
+  Title,
+  Wrapper,
+} from "./styles";
+
 type Props = {
   children?: ReactNode;
   appName?: string;
   theme?: Record<string, string>;
-};
-
-const theme = {
-  primary: "blueviolet",
 };
 
 export default function Authentication({
@@ -31,6 +39,7 @@ export default function Authentication({
 
   const [selectedTab, setSelectedTab] = useState(availableTabs[0]);
   const [toggleVerifyOtpScreen, settoggleVerifyOtpScreen] = useState(false);
+
   const [registerUsername, setRegisterUsername] = useState({
     value: "",
     isError: false,
@@ -163,7 +172,8 @@ export default function Authentication({
           console.log("Session expired");
           await refreshAwsCredentials();
           //   setIsUserAuthenticated(true);
-          setcurrentSession(JSON.parse(sessionStorage.getItem("AWSCred")));
+          const awsCred = sessionStorage.getItem("AWSCred");
+          awsCred ? setcurrentSession(JSON.parse(awsCred)) : null;
         }
         // else {
         //   console.log("not expired.. logging u back");
@@ -186,6 +196,88 @@ export default function Authentication({
 
   if (isUserAuthenticated) return <div> {children}</div>;
 
+  const RegisterForm = (
+    <RegisterWrapper>
+      <InputBox
+        type="email"
+        placeHolder="email"
+        fieldDetails={emailAddress}
+        setFieldDetails={setEmailAddress}
+        validator={validateEmail}
+      />
+      <InputBox
+        type="text"
+        placeHolder="username"
+        fieldDetails={registerUsername}
+        setFieldDetails={setRegisterUsername}
+        validator={validateUsername}
+      />
+      <InputBox
+        type="password"
+        placeHolder="password"
+        fieldDetails={registerPasswordFirst}
+        setFieldDetails={setregisterPasswordFirst}
+        validator={validatePasswordpolicy}
+      />
+
+      <InputBox
+        type="password"
+        placeHolder="re-password"
+        fieldDetails={registerPasswordSecond}
+        setFieldDetails={setregisterPasswordSecond}
+        validator={matchPassword}
+      />
+      <PrimaryButton
+        isLoading={isLoading}
+        onClick={async () => await handleRegister()}
+      >
+        Register
+      </PrimaryButton>
+    </RegisterWrapper>
+  );
+  const SignInForm = (
+    <SignInWrapper>
+      <InputBox
+        type="email"
+        placeHolder="email"
+        fieldDetails={emailAddress}
+        setFieldDetails={setEmailAddress}
+        validator={validateEmail}
+      />
+      <InputBox
+        type="password"
+        placeHolder="password"
+        fieldDetails={password}
+        setFieldDetails={setPassword}
+        validator={validatePasswordpolicy}
+      />
+      <PrimaryButton
+        isLoading={isLoading}
+        onClick={async (e) => await handleLogin(e)}
+      >
+        {isLoading && <Loader />}
+        Login
+      </PrimaryButton>
+      <Link>forgot password</Link>
+    </SignInWrapper>
+  );
+  const VerifyOtpForm = (
+    <>
+      <InputBox
+        type="number"
+        placeHolder="OTP"
+        fieldDetails={verificationOtp}
+        setFieldDetails={setverificationOtp}
+      />
+      <PrimaryButton
+        isLoading={isLoading}
+        onClick={async () => await verifyOtp()}
+      >
+        Verify
+      </PrimaryButton>
+    </>
+  );
+
   return (
     <Wrapper>
       <Title>{appName}</Title>
@@ -200,165 +292,13 @@ export default function Authentication({
           </Tab>
         ))}
       </TabWrapper>
-      {selectedTab === availableTabs[0] && (
-        <SignInWrapper>
-          <InputBox
-            type="email"
-            placeHolder="email"
-            fieldDetails={emailAddress}
-            setFieldDetails={setEmailAddress}
-            validator={validateEmail}
-          />
-          <InputBox
-            type="password"
-            placeHolder="password"
-            fieldDetails={password}
-            setFieldDetails={setPassword}
-            validator={validatePasswordpolicy}
-          />
-          <PrimaryButton
-            isLoading={isLoading}
-            onClick={async (e) => await handleLogin(e)}
-          >
-            {isLoading && <Loader />}
-            Login
-          </PrimaryButton>
-          <Link>forgot password</Link>
-        </SignInWrapper>
-      )}
-      {selectedTab === availableTabs[1] && !toggleVerifyOtpScreen && (
-        <RegisterWrapper>
-          <InputBox
-            type="email"
-            placeHolder="email"
-            fieldDetails={emailAddress}
-            setFieldDetails={setEmailAddress}
-            validator={validateEmail}
-          />
-          <InputBox
-            type="text"
-            placeHolder="username"
-            fieldDetails={registerUsername}
-            setFieldDetails={setRegisterUsername}
-            validator={validateUsername}
-          />
-          <InputBox
-            type="password"
-            placeHolder="password"
-            fieldDetails={registerPasswordFirst}
-            setFieldDetails={setregisterPasswordFirst}
-            validator={validatePasswordpolicy}
-          />
-
-          <InputBox
-            type="password"
-            placeHolder="re-password"
-            fieldDetails={registerPasswordSecond}
-            setFieldDetails={setregisterPasswordSecond}
-            validator={matchPassword}
-          />
-          <PrimaryButton
-            isLoading={isLoading}
-            onClick={async () => await handleRegister()}
-          >
-            Register
-          </PrimaryButton>
-        </RegisterWrapper>
-      )}
-      {selectedTab === availableTabs[1] && toggleVerifyOtpScreen && (
-        <>
-          <InputBox
-            type="number"
-            placeHolder="OTP"
-            fieldDetails={verificationOtp}
-            setFieldDetails={setverificationOtp}
-          />
-          <PrimaryButton
-            isLoading={isLoading}
-            onClick={async () => await verifyOtp()}
-          >
-            Verify
-          </PrimaryButton>
-        </>
-      )}
+      {selectedTab === availableTabs[0] && SignInForm}
+      {selectedTab === availableTabs[1] &&
+        !toggleVerifyOtpScreen &&
+        RegisterForm}
+      {selectedTab === availableTabs[1] &&
+        toggleVerifyOtpScreen &&
+        VerifyOtpForm}
     </Wrapper>
   );
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  background-color: "white";
-  padding: 1rem;
-  border-radius: 0.4rem;
-  border: 0.6px grey solid;
-  box-shadow: 6px 8px;
-`;
-
-const TabWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin: 0.4rem;
-`;
-
-const Title = styled.h2`
-  color: ${theme.primary};
-`;
-
-const Tab = styled.div`
-  font-size: 1.5em;
-  text-align: center;
-  cursor: pointer;
-  border-radius: 0.2rem;
-  margin: 1rem 0rem;
-  padding: 0.6rem 1rem;
-  :hover {
-    animation: fade 2s infinite;
-  }
-  transition: background-color 0.5s;
-
-  @media (prefers-color-scheme: dark) {
-    color: ${(props: { isActive?: boolean }) =>
-      !props.isActive ? "white" : "black"};
-    background-color: ${(props: { isActive?: boolean }) =>
-      props.isActive ? "white" : "black"};
-  }
-  @media (prefers-color-scheme: light) {
-    color: ${(props: { isActive?: boolean }) =>
-      !props.isActive ? "black" : "white"};
-    background-color: ${(props: { isActive?: boolean }) =>
-      props.isActive ? "black" : "white"};
-  }
-`;
-
-const PrimaryButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.2rem;
-  background-color: ${theme.primary};
-  color: white;
-  font-weight: 500;
-  font-size: 1.2rem;
-  margin: 0.6rem 0.5rem;
-  opacity: ${(props: { isLoading: boolean }) => (props.isLoading ? 0.8 : 1)};
-  cursor: pointer;
-
-  :hover {
-    transition: opacity 0.25s;
-    opacity: 0.8;
-  }
-`;
-
-const Link = styled.a`
-  cursor: pointer;
-`;
-
-const SignInWrapper = styled.form`
-  display: flex;
-  flex-direction: column;
-  width: auto;
-`;
-const RegisterWrapper = styled(SignInWrapper)``;

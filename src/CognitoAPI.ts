@@ -116,6 +116,7 @@ async function login(username: string, password: string) {
   return new Promise((resolve, reject) => {
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: async function (authDetails) {
+        console.log({ authDetails });
         const idToken = authDetails.getIdToken().getJwtToken();
         console.log("Id Token generated from user cred", { idToken });
         const awsCredentials = await createCredentialsFromToken(idToken);
@@ -156,7 +157,11 @@ async function verifyOtpFromEmail(username: string, otp: string) {
 }
 
 async function refreshAwsCredentials() {
-  const userDetails = JSON.parse(sessionStorage.getItem("UserDetails"));
+  const userDetailsString = sessionStorage.getItem("UserDetails");
+  if (!userDetailsString) {
+    throw new Error("UserDetails not present");
+  }
+  const userDetails = JSON.parse(userDetailsString);
   const userData = { Username: userDetails.email, Pool: userPool };
   const cognitoUser = new CognitoUser(userData);
 
